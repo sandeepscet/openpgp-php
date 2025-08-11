@@ -222,6 +222,8 @@ class OpenPGP_Crypt_RSA {
         $data = $key->decrypt($edata);
     } catch (\RuntimeException $e) {
         return NULL;
+    } catch (\OutOfRangeException $e) {
+        return NULL;
     }
 
     if(!$data) return NULL;
@@ -261,17 +263,15 @@ class OpenPGP_Crypt_RSA {
      **/
 
     if($private) {
-        // Invert p and q to make u work out as q'
         $rawKey = [
             'e' => new Math_BigInteger($packet->key['e'], 256),
             'n' => new Math_BigInteger($packet->key['n'], 256),
             'd' => new Math_BigInteger($packet->key['d'], 256),
-            'q' => new Math_BigInteger($packet->key['p'], 256),
-            'p' => new Math_BigInteger($packet->key['q'], 256),
+            'p' => new Math_BigInteger($packet->key['p'], 256),
+            'q' => new Math_BigInteger($packet->key['q'], 256),
         ];
         if (array_key_exists('u', $packet->key)) {
-            // possible keys for 'u': https://github.com/phpseclib/phpseclib/blob/master/phpseclib/Crypt/RSA/Formats/Keys/Raw.php#L108
-            $rawKey['inerseq'] = new Math_BigInteger($packet->key['u'], 256);
+            $rawKey['qInverse'] = new Math_BigInteger($packet->key['u'], 256);
         }
 
         return publickeyloader::loadPrivateKey($rawKey)
