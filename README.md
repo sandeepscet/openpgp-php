@@ -3,7 +3,7 @@
 OpenPGP.php: OpenPGP for PHP
 ============================
 
-This is a pure-PHP implementation of the OpenPGP Message Format (RFC 4880).
+This is a Forked of
 
 * <https://github.com/singpolyma/openpgp-php>
 
